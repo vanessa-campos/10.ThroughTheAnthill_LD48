@@ -7,18 +7,26 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] float Speed = 3;
     [SerializeField] float slowSpeed = 1.5f;
-    [SerializeField] GameObject prefabTile1;
+    [SerializeField] GameObject PointsPopup;
     [SerializeField] Text pointsText;
     [SerializeField] Text barText;
     [SerializeField] Slider bar;
-    [SerializeField] Image[] ants = new Image[3];
+    [SerializeField] Image[] ants;
+    [SerializeField] AudioClip eatSound = null;
+    [SerializeField] AudioClip digSound = null;
 
     Rigidbody _rigidbody;
     Animator _animator;
     ParticleSystem dirtyParticle;
+    AudioSource bugSound;
+    GameManager game;
     float horizontalInput;
     float verticalInput;
     float originalSpeed;
+    Vector3 initialPos;
+    Quaternion initialRot;
+    bool leaf;
+    TextMesh textPointsPopup;
 
 
     int stamina;
@@ -45,15 +53,30 @@ public class PlayerController : MonoBehaviour
     int life;
     public int Life { get { return life; } set { life = value; } }
 
+
+
+    IEnumerator BugSound()
+    {
+        yield return new WaitForSeconds(5);
+        bugSound.Play();
+        StartCoroutine(BugSound());
+    }
+
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
         _animator = GetComponent<Animator>();
         dirtyParticle = GetComponentInChildren<ParticleSystem>();
+        bugSound = GetComponent<AudioSource>();
+        game = FindObjectOfType<GameManager>();
+        textPointsPopup = PointsPopup.GetComponent<TextMesh>();
         Life = 3;
         Stamina = 100;
         Points = 0;
         originalSpeed = Speed;
+        initialPos = transform.position;
+        initialRot = transform.rotation;
+        StartCoroutine(BugSound());
     }
 
     void Update()
@@ -79,21 +102,33 @@ public class PlayerController : MonoBehaviour
 
         // StaminaBar
         bar.value = Stamina * .01f;
-        //Tirar uma vida quando a barra esvaziar e salvar o valor em PlayerPrefs
-        Life = PlayerPrefs.GetInt("PPVida");
         if (stamina <= 0)
         {
-            life -= 1;
-            ants[Life - 1].color = new Vector4(0, 0, 0, 0);
-            PlayerPrefs.SetInt("PPVida", Life);
-            // GM.Jogo();
+            Life -= 1;
+            ants[Life].color = new Vector4(0, 0, 0, 0);
+            transform.position = initialPos;
+            transform.rotation = initialRot;
+            Stamina = 100;
         }
         if (Life <= 0)
         {
-            // GM.Fim();
+            PlayerPrefs.GetInt("PPRecord", game.Record);
+            if (points > game.Record || game.Record <= 0)
+            {
+                game.Record = points;
+                PlayerPrefs.SetInt("PPRecord", game.Record);
+            }
+            game.gameOver = true;
+            Life = 3;
+            Points = 0;
         }
     }
 
+    IEnumerator HidePointsPopup()
+    {
+        yield return new WaitForSeconds(1);
+        PointsPopup.SetActive(false);
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("tile1"))
@@ -103,18 +138,64 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag("tile2"))
         {
             Speed = slowSpeed;
-            Stamina -= 10;
-            Points += 10;
+            if (digSound != null)
+            {
+                AudioSource.PlayClipAtPoint(digSound, transform.position, 1f);
+            }
+            Stamina -= 5;
             other.GetComponent<Animator>().SetTrigger("dig");
             dirtyParticle.Play();
+            textPointsPopup.text = "-5";
+            PointsPopup.transform.position = new Vector3(transform.position.x + 1, transform.position.y + 1, -1);
+            PointsPopup.SetActive(true);
+            StartCoroutine(HidePointsPopup());
             other.transform.position = new Vector3(other.transform.position.x, other.transform.position.y, .5f);
-            // Destroy(other.gameObject);
-            // Instantiate(prefabTile1, other.transform.position, Quaternion.identity);
         }
-        if (other.gameObject.CompareTag("Candy"))
+        if (other.gameObject.CompareTag("tile3"))
         {
+            if (leaf)
+            {
+                Destroy(GameObject.FindGameObjectWithTag("leaf"));
+                Points += 50;
+                textPointsPopup.text = "+50";
+                PointsPopup.transform.position = new Vector3(transform.position.x + 1, transform.position.y + 1, -1);
+                PointsPopup.SetActive(true);
+                StartCoroutine(HidePointsPopup());
+                other.transform.Rotate(0,90,90);
+                leaf=false;
+            }
+        }
+        if (other.gameObject.CompareTag("candyGood"))
+        {
+            if (eatSound != null)
+            {
+                AudioSource.PlayClipAtPoint(eatSound, other.transform.position, 5);
+            }
+            Stamina += 100;
+            textPointsPopup.text = "+100";
+            PointsPopup.transform.position = new Vector3(transform.position.x + 1, transform.position.y + 1, -1);
+            PointsPopup.SetActive(true);
+            StartCoroutine(HidePointsPopup());
             Destroy(other.gameObject);
-            Stamina += 50;
+        }
+        if (other.gameObject.CompareTag("candyBad"))
+        {
+            if (eatSound != null)
+            {
+                AudioSource.PlayClipAtPoint(eatSound, other.transform.position, 5);
+            }
+            Stamina -= 30;
+            Destroy(other.gameObject);
+        }
+        if (other.gameObject.CompareTag("leaf"))
+        {
+            leaf = true;
+            other.transform.parent = transform;
+            other.GetComponent<SphereCollider>().radius = 0;
+        }
+        if (other.gameObject.CompareTag("Finish"))
+        {
+            game.levelCompleted = true;
         }
     }
 

@@ -4,12 +4,13 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Ground1
-  - Ground2
-  - Ground3
   - Candy
   - tile2
   - tile1
+  - candyGood
+  - candyBad
+  - tile3
+  - leaf
   layers:
   - Default
   - TransparentFX
