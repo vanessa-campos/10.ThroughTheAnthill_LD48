@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public bool gameOver;
 
     int record;
-    public int Record { get { return record; } set { record = value; recordText.text = "RECORD: " + record;} }
+    public int Record { get { return record; } set { record = value; recordText.text = "RECORD: " + record; } }
 
 
     public void PlayClicked()
@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
         panelMenu.SetActive(true);
         player.SetActive(false);
         Record = 0;
+        PlayerPrefs.SetInt("PPRecord", Record);
     }
 
     private void Update()
@@ -59,14 +60,16 @@ public class GameManager : MonoBehaviour
         {
             panelMenu.SetActive(true);
             panelPlay.SetActive(false);
+            PlayerPrefs.GetInt("PPRecord", Record);
         }
     }
 
     IEnumerator BackToMenu()
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(5);
         panelMenu.SetActive(true);
         panelLevelCompleted.SetActive(false);
+        PlayerPrefs.GetInt("PPRecord", Record);
     }
 
 }

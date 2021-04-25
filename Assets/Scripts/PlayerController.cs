@@ -25,8 +25,9 @@ public class PlayerController : MonoBehaviour
     float originalSpeed;
     Vector3 initialPos;
     Quaternion initialRot;
-    bool leaf;
+    public bool leaf;
     TextMesh textPointsPopup;
+    GameObject leafPrefab;
 
 
     int stamina;
@@ -112,15 +113,16 @@ public class PlayerController : MonoBehaviour
         }
         if (Life <= 0)
         {
-            PlayerPrefs.GetInt("PPRecord", game.Record);
-            if (points > game.Record || game.Record <= 0)
-            {
-                game.Record = points;
-                PlayerPrefs.SetInt("PPRecord", game.Record);
-            }
             game.gameOver = true;
             Life = 3;
             Points = 0;
+        }
+        // Set record value
+        PlayerPrefs.GetInt("PPRecord", game.Record);
+        if (points > game.Record || game.Record <= 0)
+        {
+            game.Record = points;
+            PlayerPrefs.SetInt("PPRecord", game.Record);
         }
     }
 
@@ -155,14 +157,14 @@ public class PlayerController : MonoBehaviour
         {
             if (leaf)
             {
-                Destroy(GameObject.FindGameObjectWithTag("leaf"));
+                Destroy(leafPrefab);
                 Points += 50;
                 textPointsPopup.text = "+50";
                 PointsPopup.transform.position = new Vector3(transform.position.x + 1, transform.position.y + 1, -1);
                 PointsPopup.SetActive(true);
                 StartCoroutine(HidePointsPopup());
-                other.transform.Rotate(0,90,90);
-                leaf=false;
+                other.transform.Rotate(0, 90, 90);
+                leaf = false;
             }
         }
         if (other.gameObject.CompareTag("candyGood"))
@@ -192,6 +194,7 @@ public class PlayerController : MonoBehaviour
             leaf = true;
             other.transform.parent = transform;
             other.GetComponent<SphereCollider>().radius = 0;
+            leafPrefab = other.gameObject;
         }
         if (other.gameObject.CompareTag("Finish"))
         {
