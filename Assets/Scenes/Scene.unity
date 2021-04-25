@@ -3469,10 +3469,9 @@ Transform:
   - {fileID: 973694908}
   - {fileID: 2143238828}
   - {fileID: 995668787}
-  - {fileID: 1745728708}
   - {fileID: 997636141}
-  - {fileID: 358192764}
   - {fileID: 458042728}
+  - {fileID: 358192764}
   - {fileID: 451775476}
   - {fileID: 1437180668}
   - {fileID: 1337447718}
@@ -3487,6 +3486,7 @@ Transform:
   - {fileID: 1356270290}
   - {fileID: 1049467028}
   - {fileID: 292938991}
+  - {fileID: 1745728708}
   - {fileID: 247824817}
   - {fileID: 1100092063}
   - {fileID: 1059195309}
@@ -30884,7 +30884,8 @@ MonoBehaviour:
   - {fileID: 647040688}
   eatSound: {fileID: 8300000, guid: 4c23369b96e7c3943a580a47739ea006, type: 3}
   digSound: {fileID: 8300000, guid: fdc00f4da3ff248408edf5f4c3cced11, type: 3}
-  leaf: 0
+  leafSound: {fileID: 8300000, guid: 596d07de3ae4ffd41ae72929fcce0f22, type: 3}
+  completedSound: {fileID: 8300000, guid: cf321e7e295e1ba4f8374ddc94f65cc4, type: 3}
 --- !u!95 &624472620
 Animator:
   serializedVersion: 3
@@ -61877,7 +61878,6 @@ Transform:
   - {fileID: 1766379367}
   - {fileID: 672818498}
   - {fileID: 94282378}
-  - {fileID: 1433839555}
   - {fileID: 777377823}
   - {fileID: 1369227444}
   - {fileID: 1191630952}
@@ -61904,6 +61904,7 @@ Transform:
   - {fileID: 1899105165}
   - {fileID: 95002160}
   - {fileID: 826768836}
+  - {fileID: 1433839555}
   - {fileID: 35760481}
   - {fileID: 1046128200}
   - {fileID: 1362689364}

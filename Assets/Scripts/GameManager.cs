@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,8 +14,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public bool levelCompleted;
     [HideInInspector] public bool gameOver;
 
-    int record;
-    public int Record { get { return record; } set { record = value; recordText.text = "RECORD: " + record; } }
+    // int record;
+    // public int Record { get { return record; } set { record = value; recordText.text = "RECORD: " + record; } }
 
 
     public void PlayClicked()
@@ -33,8 +34,6 @@ public class GameManager : MonoBehaviour
     {
         panelMenu.SetActive(true);
         player.SetActive(false);
-        Record = 0;
-        PlayerPrefs.SetInt("PPRecord", Record);
     }
 
     private void Update()
@@ -52,15 +51,13 @@ public class GameManager : MonoBehaviour
             if (Input.anyKeyDown)
             {
                 gameOver = false;
-                panelMenu.SetActive(true);
-                panelGameOver.SetActive(false);
+                StartCoroutine(BackToMenu());
             }
         }
         if (Input.GetButtonDown("Cancel"))
         {
             panelMenu.SetActive(true);
             panelPlay.SetActive(false);
-            PlayerPrefs.GetInt("PPRecord", Record);
         }
     }
 
@@ -69,7 +66,8 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(5);
         panelMenu.SetActive(true);
         panelLevelCompleted.SetActive(false);
-        PlayerPrefs.GetInt("PPRecord", Record);
+        panelGameOver.SetActive(false);
+        SceneManager.LoadScene("Scene");
     }
 
 }

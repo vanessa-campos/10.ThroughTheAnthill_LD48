@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Image[] ants;
     [SerializeField] AudioClip eatSound = null;
     [SerializeField] AudioClip digSound = null;
+    [SerializeField] AudioClip leafSound = null;
+    [SerializeField] AudioClip completedSound = null;
 
     Rigidbody _rigidbody;
     Animator _animator;
@@ -25,9 +27,10 @@ public class PlayerController : MonoBehaviour
     float originalSpeed;
     Vector3 initialPos;
     Quaternion initialRot;
-    public bool leaf;
     TextMesh textPointsPopup;
     GameObject leafPrefab;
+    bool leaf;
+    int leaves;
 
 
     int stamina;
@@ -77,6 +80,7 @@ public class PlayerController : MonoBehaviour
         originalSpeed = Speed;
         initialPos = transform.position;
         initialRot = transform.rotation;
+        leaves = 9;
         StartCoroutine(BugSound());
     }
 
@@ -114,16 +118,15 @@ public class PlayerController : MonoBehaviour
         if (Life <= 0)
         {
             game.gameOver = true;
-            Life = 3;
-            Points = 0;
         }
+
         // Set record value
-        PlayerPrefs.GetInt("PPRecord", game.Record);
-        if (points > game.Record || game.Record <= 0)
-        {
-            game.Record = points;
-            PlayerPrefs.SetInt("PPRecord", game.Record);
-        }
+        // PlayerPrefs.GetInt("PPRecord", game.Record);
+        // if (points > game.Record)
+        // {
+        //     game.Record = points;
+        //     PlayerPrefs.SetInt("PPRecord", game.Record);
+        // }
     }
 
     IEnumerator HidePointsPopup()
@@ -158,6 +161,10 @@ public class PlayerController : MonoBehaviour
             if (leaf)
             {
                 Destroy(leafPrefab);
+                if (leafSound != null)
+                {
+                    AudioSource.PlayClipAtPoint(leafSound, transform.position, 1f);
+                }
                 Points += 50;
                 textPointsPopup.text = "+50";
                 PointsPopup.transform.position = new Vector3(transform.position.x + 1, transform.position.y + 1, -1);
@@ -166,6 +173,7 @@ public class PlayerController : MonoBehaviour
                 other.transform.Rotate(0, 90, 90);
                 leaf = false;
             }
+
         }
         if (other.gameObject.CompareTag("candyGood"))
         {
@@ -187,18 +195,33 @@ public class PlayerController : MonoBehaviour
                 AudioSource.PlayClipAtPoint(eatSound, other.transform.position, 5);
             }
             Stamina -= 30;
+            textPointsPopup.text = "-30";
+            PointsPopup.transform.position = new Vector3(transform.position.x + 1, transform.position.y + 1, -1);
+            PointsPopup.SetActive(true);
+            StartCoroutine(HidePointsPopup());
             Destroy(other.gameObject);
         }
         if (other.gameObject.CompareTag("leaf"))
         {
-            leaf = true;
-            other.transform.parent = transform;
-            other.GetComponent<SphereCollider>().radius = 0;
-            leafPrefab = other.gameObject;
+            if (!leaf)
+            {
+                leaf = true;
+                leaves -= 1;
+                other.transform.parent = transform;
+                other.GetComponent<SphereCollider>().radius = 0;
+                leafPrefab = other.gameObject;
+            }
         }
         if (other.gameObject.CompareTag("Finish"))
         {
-            game.levelCompleted = true;
+            if (leaves <= 0)
+            {
+                game.levelCompleted = true;
+                if (completedSound != null)
+                {
+                    AudioSource.PlayClipAtPoint(completedSound, transform.position, 1f);
+                }
+            }
         }
     }
 
