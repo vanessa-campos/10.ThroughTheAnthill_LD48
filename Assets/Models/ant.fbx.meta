@@ -4,17 +4,14 @@ ModelImporter:
   serializedVersion: 19301
   internalIDToNameTable:
   - first:
-      74: -8945691123924629249
-    second: Armature|Idle
+      74: 7425738154971201663
+    second: MainAntArmature|Idle
   - first:
-      74: -1134726387427048189
-    second: Wak
+      74: 4874847045974575770
+    second: MainAnt-Wak
   - first:
-      74: 2641510081473961649
-    second: Armature|Wak.001
-  - first:
-      74: -3100369314251171874
-    second: Idle
+      74: 5095450069592634378
+    second: MainAnt-Idle
   externalObjects: {}
   materials:
     materialImportMode: 1
@@ -44,8 +41,8 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Idle
-      takeName: Armature|Idle
+      name: MainAnt-Idle
+      takeName: MainAntArmature|Idle
       internalID: 0
       firstFrame: 0
       lastFrame: 1
@@ -73,8 +70,8 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Wak
-      takeName: Armature|Wak
+      name: MainAnt-Wak
+      takeName: MainAntArmature|Wak
       internalID: 0
       firstFrame: 0
       lastFrame: 50

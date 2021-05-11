@@ -4,13 +4,16 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Candy
-  - tile2
-  - tile1
   - candyGood
   - candyBad
-  - tile3
   - leaf
+  - minimap
+  - tile
+  - tileAnt
+  - pointsPopup
+  - points
+  - ant
+  - blackAnt
   layers:
   - Default
   - TransparentFX

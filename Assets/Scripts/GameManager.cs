@@ -5,24 +5,17 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] GameObject panelMenu;
-    [SerializeField] GameObject panelPlay;
-    [SerializeField] GameObject panelLevelCompleted;
-    [SerializeField] GameObject panelGameOver;
-    [SerializeField] GameObject player;
-    [SerializeField] Text recordText;
-    [HideInInspector] public bool levelCompleted;
-    [HideInInspector] public bool gameOver;
+    PlayerController player;
 
-    // int record;
-    // public int Record { get { return record; } set { record = value; recordText.text = "RECORD: " + record; } }
+    public int currentScene;
+    public int totalPoints;
+    // public bool joystick;
 
 
     public void PlayClicked()
     {
-        panelPlay.SetActive(true);
-        panelMenu.SetActive(false);
-        player.SetActive(true);
+        LoadScene(1, 1);
+        PlayerPrefs.SetInt("Points", 0);
     }
 
     public void QuitClicked()
@@ -30,44 +23,33 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
+    // public void JoystickOn()
+    // {
+    //     if (joystick)
+    //     {
+    //         joystick = false;
+    //     }
+    //     else
+    //     {
+    //         joystick = true;
+    //     }
+    // }
     private void Start()
     {
-        panelMenu.SetActive(true);
-        player.SetActive(false);
+        player = FindObjectOfType<PlayerController>();
+        currentScene = SceneManager.GetActiveScene().buildIndex;
     }
 
-    private void Update()
+
+    IEnumerator SceneDelay(int SceneNumber, float delay)
     {
-        if (levelCompleted)
-        {
-            panelLevelCompleted.SetActive(true);
-            panelPlay.SetActive(false);
-            StartCoroutine(BackToMenu());
-        }
-        if (gameOver)
-        {
-            panelPlay.SetActive(false);
-            panelGameOver.SetActive(true);
-            if (Input.anyKeyDown)
-            {
-                gameOver = false;
-                StartCoroutine(BackToMenu());
-            }
-        }
-        if (Input.GetButtonDown("Cancel"))
-        {
-            panelMenu.SetActive(true);
-            panelPlay.SetActive(false);
-        }
+        yield return new WaitForSecondsRealtime(delay);
+        SceneManager.LoadScene(SceneNumber);
+    }
+    public void LoadScene(int SceneNumber, float delay = 0)
+    {
+        StartCoroutine(SceneDelay(SceneNumber, delay));
     }
 
-    IEnumerator BackToMenu()
-    {
-        yield return new WaitForSeconds(5);
-        panelMenu.SetActive(true);
-        panelLevelCompleted.SetActive(false);
-        panelGameOver.SetActive(false);
-        SceneManager.LoadScene("Scene");
-    }
 
 }
