@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class LevelManager : MonoBehaviour
 {
@@ -11,36 +12,23 @@ public class LevelManager : MonoBehaviour
     [SerializeField] GameObject TextLevelCompleted;
     [SerializeField] GameObject panelGameOver;
     [SerializeField] GameObject panelLevelTitle;
-    [SerializeField] Text levelText;
+    [SerializeField] TextMeshProUGUI levelText;
     [HideInInspector] public bool levelCompleted;
     [HideInInspector] public bool gameOver;
 
-    public Text pointsText;
-    public Text barText;
-    public Text leafText;
+    public TextMeshProUGUI pointsText;
+    public TextMeshProUGUI barText;
+    public TextMeshProUGUI leafText;
     public Slider bar;
     public Image[] ants;
     public GameObject leavesText;
     public GameObject tipText;
-    public GameObject helpText;
     GameManager gameManager;
     GameObject minimap;
 
 
 
 
-    // IEnumerator StartLevel()
-    // {
-    //     yield return new WaitForSeconds(3);
-    // }
-    public void OnMouseEnter()
-    {
-        helpText.SetActive(true);
-    }
-    public void OnMouseExit()
-    {
-        helpText.SetActive(false);
-    }
 
     private void Start()
     {
@@ -51,7 +39,6 @@ public class LevelManager : MonoBehaviour
         tipText.SetActive(false);
         minimap.SetActive(false);
         TextLevelCompleted.SetActive(false);
-        helpText.SetActive(false);
         StartCoroutine(StartLevel());
     }
 
@@ -59,7 +46,7 @@ public class LevelManager : MonoBehaviour
     {
         levelText.text = "Level " + (gameManager.currentScene);
         panelLevelTitle.SetActive(true);
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(3);
         panelLevelTitle.SetActive(false);
         panelPlay.SetActive(true);
         minimap.SetActive(true);

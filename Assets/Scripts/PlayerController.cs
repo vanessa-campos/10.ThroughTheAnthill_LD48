@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -86,18 +87,20 @@ public class PlayerController : MonoBehaviour
         floatingJoystick.gameObject.SetActive(true);
 #endif
     }
+
     IEnumerator BugSound()
     {
         yield return new WaitForSeconds(5);
         bugSound.Play();
         StartCoroutine(BugSound());
+
     }
     IEnumerator PointsPopup(string value)
     {
-        Vector3 pos = new Vector3(transform.position.x + Random.Range(-1, 1), -1, transform.position.z + Random.Range(.5f, 1.5f));
+        Vector3 pos = new Vector3(transform.position.x + Random.Range(-1.5f, 1.5f), 1, transform.position.z + Random.Range(-1.5f, 1.5f));
         GameObject pointsPopupPrefab = Instantiate(pointsPopup, pos, Quaternion.Euler(90, 0, 0));
-        pointsPopupPrefab.GetComponent<TextMesh>().text = value;
-        yield return new WaitForSeconds(.5f);
+        pointsPopupPrefab.GetComponent<TextMeshPro>().text = value;
+        yield return new WaitForSeconds(.5f);                       
         Destroy(pointsPopupPrefab);
     }
     IEnumerator ShowTextLeaves()
@@ -183,6 +186,18 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(PointsPopup("-5"));
             other.transform.position = new Vector3(other.transform.position.x, -.5f, other.transform.position.z);
         }
+        if (other.gameObject.CompareTag("tile0"))
+        {
+            Speed = slowSpeed;
+            if (digSound != null)
+            {
+                AudioSource.PlayClipAtPoint(digSound, transform.position, 1f);
+            }
+            other.GetComponent<Animator>().SetTrigger("dig");
+            dirtyParticle.Play();
+
+            other.transform.position = new Vector3(other.transform.position.x, -.5f, other.transform.position.z);
+        }
         if (other.gameObject.CompareTag("leaf"))
         {
             if (!leaf)
@@ -190,7 +205,10 @@ public class PlayerController : MonoBehaviour
                 leaf = true;
                 other.transform.parent = transform;
                 leafPrefab = other.gameObject;
-                blackAnt.leaf = false;
+                if (GameObject.FindGameObjectsWithTag("blackAnt").Length > 0)
+                {
+                    blackAnt.leaf = false;
+                }
             }
         }
         if (other.gameObject.CompareTag("ant"))
@@ -287,7 +305,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.CompareTag("tile"))
+        if ((other.gameObject.CompareTag("tile")) || (other.gameObject.CompareTag("tile0")))
         {
             Speed = originalSpeed;
         }
