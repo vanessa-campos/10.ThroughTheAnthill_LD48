@@ -45,13 +45,13 @@ public class BlackAnts : Ants
                 if (transform.position.z <= limitI)
                 {
                     netxPos = pos2;
-                    transform.Rotate(rot);
+                    // transform.Rotate(rot);
                     Debug.Log(state);
                 }
                 if (transform.position.z >= limitF)
                 {
                     netxPos = pos1;
-                    transform.Rotate(rot);
+                    // transform.Rotate(rot);
                     Debug.Log(state);
                 }
                 Vector3 newPos = Vector3.MoveTowards(transform.position, netxPos, speed * Time.deltaTime);

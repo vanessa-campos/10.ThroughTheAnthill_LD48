@@ -91,7 +91,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 401349808776461750}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2, y: 0.7, z: 5}
+  m_LocalPosition: {x: -2, y: 0.625, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6335264388000675511}
@@ -164,6 +164,7 @@ MonoBehaviour:
   Speed: 3
   leaf: 0
   leavesTotal: 0
+  totalPoints: 0
   pos: {fileID: 1165881982655610355}
   tilePrefab: {fileID: 6594832695054507901, guid: 5afbca4c0239f604ab63e38d8bbc1e12,
     type: 3}

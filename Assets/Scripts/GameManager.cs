@@ -5,51 +5,31 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    PlayerController player;
+    [SerializeField] int LvlsWon;
+    [SerializeField] GameObject panelLvls;
+    [SerializeField] GameObject[] buttonsLvls;
 
-    public int currentScene;
-    public int totalPoints;
-    // public bool joystick;
-
-
-    public void PlayClicked()
-    {
-        LoadScene(1, 1);
-        PlayerPrefs.SetInt("Points", 0);
+    private void Start(){   
+        panelLvls.SetActive(false);
+        LvlsWon = PlayerPrefs.GetInt("PPLvlsWon");
+        for (int i = 0; i < buttonsLvls.Length; i++) {
+            if(PlayerPrefs.GetInt("PPLvlsWon") <= i){
+                buttonsLvls[i].GetComponent<Button>().interactable = false;
+            }
+        }
+        buttonsLvls[0].GetComponent<Button>().interactable = true;
     }
 
-    public void QuitClicked()
-    {
+    public void PlayClicked(){
+        PlayerPrefs.SetInt("Points", 0);
+        panelLvls.SetActive(true);
+    }
+
+    public void QuitClicked(){
         Application.Quit();
     }
 
-    // public void JoystickOn()
-    // {
-    //     if (joystick)
-    //     {
-    //         joystick = false;
-    //     }
-    //     else
-    //     {
-    //         joystick = true;
-    //     }
-    // }
-    private void Start()
-    {
-        player = FindObjectOfType<PlayerController>();
-        currentScene = SceneManager.GetActiveScene().buildIndex;
+    public void LoadLvl(int Lvl){       
+        SceneManager.LoadScene(Lvl);            
     }
-
-
-    IEnumerator SceneDelay(int SceneNumber, float delay)
-    {
-        yield return new WaitForSecondsRealtime(delay);
-        SceneManager.LoadScene(SceneNumber);
-    }
-    public void LoadScene(int SceneNumber, float delay = 0)
-    {
-        StartCoroutine(SceneDelay(SceneNumber, delay));
-    }
-
-
 }

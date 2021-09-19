@@ -7,34 +7,23 @@ using TMPro;
 
 public class LevelManager : MonoBehaviour
 {
-    [SerializeField] GameObject panelPlay;
-    [SerializeField] GameObject panelLevelCompleted;
-    [SerializeField] GameObject TextLevelCompleted;
-    [SerializeField] GameObject panelGameOver;
-    [SerializeField] GameObject panelLevelTitle;
+    public int currentScene;
+    [SerializeField] GameObject panelPlay, panelLevelCompleted, TextLevelCompleted, panelGameOver, panelLevelTitle;
     [SerializeField] TextMeshProUGUI levelText;
-    [HideInInspector] public bool levelCompleted;
-    [HideInInspector] public bool gameOver;
+    [HideInInspector] public bool levelCompleted, gameOver;
 
-    public TextMeshProUGUI pointsText;
-    public TextMeshProUGUI barText;
-    public TextMeshProUGUI leafText;
+    public FloatingJoystick floatingJoystick;
+    public TextMeshProUGUI pointsText, barText, leafText;
     public Slider bar;
     public Image[] ants;
-    public GameObject leavesText;
-    public GameObject tipText;
+    public GameObject leavesText, tipText;
+
     GameManager gameManager;
     GameObject minimap;
 
-
-
-
-
-    private void Start()
-    {
-        gameManager = GetComponent<GameManager>();
+    private void Start(){
+        currentScene = SceneManager.GetActiveScene().buildIndex;
         minimap = GameObject.FindGameObjectWithTag("minimap");
-        gameManager.currentScene = SceneManager.GetActiveScene().buildIndex;
         leavesText.SetActive(false);
         tipText.SetActive(false);
         minimap.SetActive(false);
@@ -42,48 +31,51 @@ public class LevelManager : MonoBehaviour
         StartCoroutine(StartLevel());
     }
 
-    IEnumerator StartLevel()
-    {
-        levelText.text = "Level " + (gameManager.currentScene);
+    IEnumerator StartLevel(){
+        levelText.text = "Level " + (currentScene);
         panelLevelTitle.SetActive(true);
         yield return new WaitForSeconds(3);
         panelLevelTitle.SetActive(false);
         panelPlay.SetActive(true);
         minimap.SetActive(true);
+#if UNITY_ANDROID
+        floatingJoystick.gameObject.SetActive(true);
+#endif
     }
-    private void Update()
-    {
 
-        if (levelCompleted)
-        {
+    private void Update(){
+        if (levelCompleted){
             panelLevelCompleted.SetActive(true);
             panelPlay.SetActive(false);
-            if (gameManager.currentScene == 2)
-            {
+            if (currentScene >= 3){
                 TextLevelCompleted.SetActive(true);
-                gameManager.LoadScene(0, 3);
+                LoadScene(0, 3);
+            }else{
+                LoadScene(currentScene + 1, 1);
             }
-            else
-            {
-                gameManager.LoadScene(gameManager.currentScene + 1, 3);
-            }
+            PlayerPrefs.SetInt("PPLvlsWon", currentScene + 1);
         }
-        if (gameOver)
-        {
+
+        if (gameOver){
             panelPlay.SetActive(false);
             panelGameOver.SetActive(true);
-            if (Input.anyKeyDown)
-            {
+            if (Input.anyKeyDown){
                 gameOver = false;
-                gameManager.LoadScene(gameManager.currentScene, 2);
+                LoadScene(currentScene, 1);
             }
         }
-        if (Input.GetButtonDown("Cancel"))
-        {
-            gameManager.LoadScene(0, 2);
+
+        if (Input.GetButtonDown("Cancel")){
+            LoadScene(0, 1);
         }
-
-
     }
 
+    IEnumerator SceneDelay(int SceneNumber, float delay){
+        yield return new WaitForSecondsRealtime(delay);
+        SceneManager.LoadScene(SceneNumber);
+    }
+
+    public void LoadScene(int SceneNumber, float delay = 0){
+        StartCoroutine(SceneDelay(SceneNumber, delay));
+    }
 }
